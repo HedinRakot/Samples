@@ -10,7 +10,12 @@
 
 @foreach (var item in Model)
 {
-    <div style="float: left">@item.Name</div>
-    <div style="float: left; padding-left: 5em;">@item.LastName</div>
-    <div style="float: left; padding-left: 5em;"><a asp-action="Edit" asp-controller="Test" asp-route-id="@(item.Id)">edit</a></div>
+    <div class="row">
+        <div class="col-12">
+            <div style="float: left">@item.Name</div>
+            <div style="float: left; padding-left: 5em;">@item.LastName</div>
+            <div style="float: left; padding-left: 5em;"><a asp-action="Edit" asp-controller="Test" asp-route-id="@(item.Id)">edit</a></div>
+            <div style="float: left; padding-left: 5em;"><a asp-action="Delete" asp-controller="Test" asp-route-id="@(item.Id)">delete</a></div>
+        </div>
+    </div>
 }
