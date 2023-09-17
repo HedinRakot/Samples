@@ -82,13 +82,13 @@ namespace SampleApp.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpDelete]
         public IActionResult Delete(long id)
         {
             var test = _testRepository.Tests.FirstOrDefault(x => x.Id == id);
             _testRepository.Tests.Remove(test);
 
-            return RedirectToAction(nameof(Index));
+            return Ok(new { success = "true"});
         }
     }
 }
