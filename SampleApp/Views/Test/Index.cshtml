@@ -14,8 +14,82 @@
         <div class="col-12">
             <div style="float: left">@item.Name</div>
             <div style="float: left; padding-left: 5em;">@item.LastName</div>
-            <div style="float: left; padding-left: 5em;"><a asp-action="Edit" asp-controller="Test" asp-route-id="@(item.Id)">edit</a></div>
-            <div style="float: left; padding-left: 5em;"><a asp-action="Delete" asp-controller="Test" asp-route-id="@(item.Id)">delete</a></div>
+            <div style="float: left; padding-left: 5em;">
+                <a asp-action="Edit" asp-controller="Test" asp-route-id="@(item.Id)">edit</a>
+            </div>
+            <div style="float: left; padding-left: 5em;">
+                <a href="#" data-id="@(item.Id)" data-element-name="@item.Name" data-bs-toggle="modal" data-bs-target="#exampleModal">delete</a>
+            </div>
         </div>
     </div>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete '<span id="dialogElementName"></span>'?</p>
+                <input id="elementId" type="hidden" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="deleteElement()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section NaviTitle
+{
+    <p>This is navi title for main page</p>
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //alert('page is completely loaded');
+
+            const exampleModal = document.getElementById('exampleModal');
+            exampleModal.addEventListener('show.bs.modal', event => {
+
+                // Button that triggered the modal
+                const button = event.relatedTarget;
+                // Extract info from data-id attributes
+
+                const id = $(button).attr('data-id');
+                $('#elementId').val(id);
+
+                const name = $(button).attr('data-element-name');
+                $('#dialogElementName').html(name);
+            });
+        });
+
+        function deleteElement() {
+            var id = $('#elementId').val();
+
+            $.ajax({
+                url: '@Url.Action("Delete", "Test")/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    window.location = '@Url.Action("Index", "Test")';
+                },
+                error: function (result) {
+
+                    $('#exampleModal').modal('hide');
+
+                    if (result && result.responseJSON) {
+                        alert(result.responseJSON.errorMessage);
+                    }
+                }
+            });
+        }
+    </script>
 }
