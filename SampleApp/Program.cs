@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using SampleApp.Application;
+using SampleApp.Authentication;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
 
@@ -10,6 +12,31 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<OrderRepository>();
 builder.Services.AddSingleton<IMapping<SampleApp.Domain.Customer, CustomerModel>, CustomerModelMappingInterface>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.LoginPath = "/Login/SignIn/";
+        options.AccessDeniedPath = "/Login/Forbidden/";
+    });
+
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy(AuthorizeControllerModelConvention.PolicyName, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+    });
+});
+
+builder.Services.AddMvc(options =>
+{
+    options.Conventions.Add(new AuthorizeControllerModelConvention());
+});
+
 
 var app = builder.Build();
 
@@ -27,6 +54,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllerRoute(
     name: "default",
