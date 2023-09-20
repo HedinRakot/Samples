@@ -4,21 +4,21 @@ using SampleApp.Application;
 
 namespace SampleApp.Controllers
 {
-    public class TestController : Controller
+    public class CustomerController : Controller
     {
-        private TestRepository _testRepository;
-        public TestController(TestRepository testRepository)
+        private CustomerRepository _customerRepository;
+        public CustomerController(CustomerRepository customerRepository)
         {
-            _testRepository = testRepository;
+            _customerRepository = customerRepository;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var models = new List<TestModel>();
-            foreach (var item in _testRepository.Tests)
+            var models = new List<CustomerModel>();
+            foreach (var item in _customerRepository.Customers)
             {
-                models.Add(new TestModel
+                models.Add(new CustomerModel
                 {
                     Id = item.Id,
                     Name = item.Name,
@@ -32,17 +32,17 @@ namespace SampleApp.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            return View(new TestModel());
+            return View(new CustomerModel());
         }
 
         [HttpPost]
-        public IActionResult Add(TestModel model)
+        public IActionResult Add(CustomerModel model)
         {
             if (ModelState.IsValid)
             {
-                var lastId = _testRepository.Tests.Count != 0 ? _testRepository.Tests.Max(x => x.Id) : 0;
+                var lastId = _customerRepository.Customers.Count != 0 ? _customerRepository.Customers.Max(x => x.Id) : 0;
 
-                _testRepository.Tests.Add(new Domain.Test
+                _customerRepository.Customers.Add(new Domain.Customer
                 {
                     Id = lastId + 1,
                     Name = model.Name,
@@ -58,23 +58,23 @@ namespace SampleApp.Controllers
         [HttpGet]
         public IActionResult Edit(long id)
         {
-            var test = _testRepository.Tests.FirstOrDefault(x => x.Id == id);
-            return View(new TestModel
+            var customer = _customerRepository.Customers.FirstOrDefault(x => x.Id == id);
+            return View(new CustomerModel
             {
-                Id = test.Id,
-                Name = test.Name,
-                LastName = test.LastName,
+                Id = customer.Id,
+                Name = customer.Name,
+                LastName = customer.LastName,
             });
         }
 
         [HttpPost]
-        public IActionResult Edit(TestModel model)
+        public IActionResult Edit(CustomerModel model)
         {
             if (ModelState.IsValid)
             {
-                var test = _testRepository.Tests.FirstOrDefault(x => x.Id == model.Id);
-                test.Name = model.Name;
-                test.LastName = model.LastName;
+                var customer = _customerRepository.Customers.FirstOrDefault(x => x.Id == model.Id);
+                customer.Name = model.Name;
+                customer.LastName = model.LastName;
 
                 return RedirectToAction(nameof(Index));
             }
@@ -85,11 +85,11 @@ namespace SampleApp.Controllers
         [HttpDelete]
         public IActionResult Delete(long id)
         {
-            var test = _testRepository.Tests.FirstOrDefault(x => x.Id == id);
+            var customer = _customerRepository.Customers.FirstOrDefault(x => x.Id == id);
 
-            if (test != null)
+            if (customer != null)
             {
-                _testRepository.Tests.Remove(test);
+                _customerRepository.Customers.Remove(customer);
             }
             else
             {

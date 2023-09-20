@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SampleApp.Models;
 
-public class TestModel
+public class CustomerModel
 {
     public long Id { get; set; } = 0;
 

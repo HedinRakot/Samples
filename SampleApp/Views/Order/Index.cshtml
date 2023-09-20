@@ -1,0 +1,89 @@
+﻿@{
+}
+@model List<OrderModel>
+
+<div class="row">
+    <div class="col-12">
+        <a asp-controller="Order" asp-action="Add" class="btn">Add new order</a>
+    </div>
+</div>
+
+@foreach (var item in Model)
+{
+    <div class="row">
+        <div class="col-12">
+            <div style="float: left">@item.CustomerName</div>
+            <div style="float: left; padding-left: 5em;">
+                <a asp-action="Edit" asp-controller="Order" asp-route-id="@(item.Id)">edit</a>
+            </div>
+            <div style="float: left; padding-left: 5em;">
+                <a href="#" data-id="@(item.Id)" data-customer-name="@item.CustomerName" data-bs-toggle="modal" data-bs-target="#deleteOrderDialog">delete</a>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="deleteOrderDialog" tabindex="-1" aria-labelledby="deleteOrderDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteOrderDialogLabel">Delete order</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete order for '<span id="customerName"></span>'?</p>
+                <input id="elementId" type="hidden" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="deleteElement()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //alert('page is completely loaded');
+
+            const deleteOrderDialog = document.getElementById('deleteOrderDialog');
+            deleteOrderDialog.addEventListener('show.bs.modal', event => {
+
+                // Button that triggered the modal
+                const button = event.relatedTarget;
+                // Extract info from data-id attributes
+
+                const id = $(button).attr('data-id');
+                $('#elementId').val(id);
+
+                const name = $(button).attr('data-customer-name');
+                $('#customerName').html(name);
+            });
+        });
+
+        function deleteElement() {
+            var id = $('#elementId').val();
+
+            $.ajax({
+                url: '@Url.Action("Delete", "Order")/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    window.location = '@Url.Action("Index", "Order")';
+                },
+                error: function (result) {
+
+                    $('#deleteOrderDialog').modal('hide');
+
+                    if (result && result.responseJSON) {
+                        alert(result.responseJSON.errorMessage);
+                    }
+                }
+            });
+        }
+    </script>
+}

@@ -1,10 +1,10 @@
 ﻿@{
 }
-@model List<TestModel>
+@model List<CustomerModel>
 
 <div class="row">
     <div class="col-12">
-        <a asp-controller="Test" asp-action="Add" class="btn">Add new Test</a>
+        <a asp-controller="Customer" asp-action="Add" class="btn">Add new customer</a>
     </div>
 </div>
 
@@ -15,25 +15,25 @@
             <div style="float: left">@item.Name</div>
             <div style="float: left; padding-left: 5em;">@item.LastName</div>
             <div style="float: left; padding-left: 5em;">
-                <a asp-action="Edit" asp-controller="Test" asp-route-id="@(item.Id)">edit</a>
+                <a asp-action="Edit" asp-controller="Customer" asp-route-id="@(item.Id)">edit</a>
             </div>
             <div style="float: left; padding-left: 5em;">
-                <a href="#" data-id="@(item.Id)" data-element-name="@item.Name" data-bs-toggle="modal" data-bs-target="#exampleModal">delete</a>
+                <a href="#" data-id="@(item.Id)" data-customer-name="@item.Name" data-bs-toggle="modal" data-bs-target="#deleteCustomerDialog">delete</a>
             </div>
         </div>
     </div>
 }
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteCustomerDialog" tabindex="-1" aria-labelledby="deleteCustomerDialogLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="deleteCustomerDialogLabel">Delete customer</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Do you really want to delete '<span id="dialogElementName"></span>'?</p>
+                <p>Do you really want to delete customer '<span id="customerName"></span>'?</p>
                 <input id="elementId" type="hidden" />
             </div>
             <div class="modal-footer">
@@ -57,8 +57,8 @@
         $(document).ready(function () {
             //alert('page is completely loaded');
 
-            const exampleModal = document.getElementById('exampleModal');
-            exampleModal.addEventListener('show.bs.modal', event => {
+            const deleteCustomerDialog = document.getElementById('deleteCustomerDialog');
+            deleteCustomerDialog.addEventListener('show.bs.modal', event => {
 
                 // Button that triggered the modal
                 const button = event.relatedTarget;
@@ -67,8 +67,8 @@
                 const id = $(button).attr('data-id');
                 $('#elementId').val(id);
 
-                const name = $(button).attr('data-element-name');
-                $('#dialogElementName').html(name);
+                const name = $(button).attr('data-customer-name');
+                $('#customerName').html(name);
             });
         });
 
@@ -76,14 +76,14 @@
             var id = $('#elementId').val();
 
             $.ajax({
-                url: '@Url.Action("Delete", "Test")/' + id,
+                url: '@Url.Action("Delete", "Customer")/' + id,
                 type: 'DELETE',
                 success: function (result) {
-                    window.location = '@Url.Action("Index", "Test")';
+                    window.location = '@Url.Action("Index", "Customer")';
                 },
                 error: function (result) {
 
-                    $('#exampleModal').modal('hide');
+                    $('#deleteCustomerDialog').modal('hide');
 
                     if (result && result.responseJSON) {
                         alert(result.responseJSON.errorMessage);
