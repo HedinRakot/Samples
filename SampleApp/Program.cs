@@ -1,4 +1,6 @@
 using SampleApp.Application;
+using SampleApp.Models;
+using SampleApp.Models.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<OrderRepository>();
+builder.Services.AddSingleton<IMapping<SampleApp.Domain.Customer, CustomerModel>, CustomerModelMappingInterface>();
 
 var app = builder.Build();
 
