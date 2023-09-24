@@ -28,11 +28,26 @@ public class LoginController : Controller
     {
         if (ModelState.IsValid)
         {
-            var customer = _customerRepository.Customers.FirstOrDefault(x => x.Name == model.UserName);
+            try
+            {
+                var customer = _customerRepository.Customers.FirstOrDefault(x => x.Name == model.UserName);
 
-            await SignIn(customer);
+                //throw new ArgumentException();
 
-            return RedirectToAction(nameof(CustomerController.Index), nameof(SampleApp.Domain.Customer));
+                await SignIn(customer);
+
+                return RedirectToAction(nameof(CustomerController.Index), nameof(SampleApp.Domain.Customer));
+            }
+            catch(NullReferenceException exception)
+            {
+                ModelState.AddModelError("Model", "User doesnt exist");
+                //TODO Logging
+            }
+            //catch(Exception exception)
+            //{
+            //    ModelState.AddModelError("Model", "Unexpected error occured. Please try again later..");
+                //TODO Logging
+            //}
         }
 
         return View("~/Views/Login/SignIn.cshtml", model);

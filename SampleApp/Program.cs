@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using SampleApp.Application;
 using SampleApp.Authentication;
+using SampleApp.ErrorHandling;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
 
@@ -21,7 +22,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
         options.LoginPath = "/Login/SignIn/";
-        options.AccessDeniedPath = "/Login/Forbidden/";
+        options.AccessDeniedPath = "/Error/Forbidden/";
     });
 
 builder.Services.AddAuthorization(o =>
@@ -59,5 +60,7 @@ app.UseAuthentication();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Customer}/{action=Index}/{id?}");
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.Run();
