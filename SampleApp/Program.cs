@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using SampleApp.Application;
 using SampleApp.Authentication;
+using SampleApp.Database;
 using SampleApp.ErrorHandling;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
@@ -13,6 +14,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<OrderRepository>();
 builder.Services.AddSingleton<IMapping<SampleApp.Domain.Customer, CustomerModel>, CustomerModelMappingInterface>();
+
+builder.Services.AddDatabase(builder.Configuration);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

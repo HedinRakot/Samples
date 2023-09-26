@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SampleApp.Application\SampleApp.Application.csproj" />
+    <ProjectReference Include="..\SampleApp.Database\SampleApp.Database.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,29 +2,40 @@
 using SampleApp.Models;
 using SampleApp.Application;
 using SampleApp.Models.Mapping;
+using SampleApp.Domain.Repositories;
 
 namespace SampleApp.Controllers;
 
 public class CustomerController : Controller
 {
-    private CustomerRepository _customerRepository;
+    private CustomerRepository _memoryCustomerRepository;
     private IMapping<Domain.Customer, CustomerModel> _customerMapping;
+    
+    private readonly ICustomerRepository _dbCustomerRepository;
+
     public CustomerController(CustomerRepository customerRepository, 
-        IMapping<Domain.Customer, CustomerModel> customerMapping)
+        IMapping<Domain.Customer, CustomerModel> customerMapping,
+        ICustomerRepository dbCustomerRepository)
     {
-        _customerRepository = customerRepository;
+        _memoryCustomerRepository = customerRepository;
         _customerMapping = customerMapping;
+        _dbCustomerRepository = dbCustomerRepository;
     }
 
     [HttpGet]
     public IActionResult Index()
     {
         var models = new List<CustomerModel>();
-        foreach (var item in _customerRepository.Customers)
+        foreach (var item in _memoryCustomerRepository.Customers)
         {
             models.Add(CustomerModelMapping.Map(item));
             //models.Add(item.ToModel());
             //models.Add(_customerMapping.Map(item));
+        }
+
+        foreach(var item in _dbCustomerRepository.GetCustomers())
+        {
+            models.Add(item.ToModel());
         }
 
         return View(models);
@@ -41,15 +52,18 @@ public class CustomerController : Controller
     {
         if (ModelState.IsValid)
         {
-            var lastId = _customerRepository.Customers.Count != 0 ? _customerRepository.Customers.Max(x => x.Id) : 0;
-
             var newCustomer = CustomerModelMapping.Map(model);
-            //var newCustomer = _customerMapping.Map(model);
-            newCustomer.Id = lastId + 1;
 
-            _customerRepository.Customers.Add(newCustomer);
+            //var lastId = _memoryCustomerRepository.Customers.Count != 0 ? _memoryCustomerRepository.Customers.Max(x => x.Id) : 0;
 
-            return RedirectToAction(nameof(Index));
+            ////var newCustomer = _customerMapping.Map(model);
+            //newCustomer.Id = lastId + 1;
+
+            //_memoryCustomerRepository.Customers.Add(newCustomer);
+
+            _dbCustomerRepository.AddCustomer(newCustomer);
+
+            return RedirectToAction(nameof(Details), new { id = newCustomer.Id });
         }
 
         return View();
@@ -58,7 +72,7 @@ public class CustomerController : Controller
     [HttpGet]
     public IActionResult Edit(long id)
     {
-        var customer = _customerRepository.Customers.FirstOrDefault(x => x.Id == id);
+        var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == id);
         return View(CustomerModelMapping.Map(customer));
         //return View(_customerMapping.Map(customer));
     }
@@ -68,13 +82,13 @@ public class CustomerController : Controller
     {
         if (ModelState.IsValid)
         {
-            var customer = _customerRepository.Customers.FirstOrDefault(x => x.Id == model.Id);
-            var index = _customerRepository.Customers.IndexOf(customer);
-            _customerRepository.Customers.Remove(customer);
+            var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == model.Id);
+            var index = _memoryCustomerRepository.Customers.IndexOf(customer);
+            _memoryCustomerRepository.Customers.Remove(customer);
 
             var editedCustomer = CustomerModelMapping.Map(model);
             //var editedCustomer = model.ToDomain();
-            _customerRepository.Customers.Insert(index, editedCustomer);
+            _memoryCustomerRepository.Customers.Insert(index, editedCustomer);
             
             //customer = _customerMapping.Map(model);
 
@@ -87,11 +101,11 @@ public class CustomerController : Controller
     [HttpDelete]
     public IActionResult Delete(long id)
     {
-        var customer = _customerRepository.Customers.FirstOrDefault(x => x.Id == id);
+        var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == id);
 
         if (customer != null)
         {
-            _customerRepository.Customers.Remove(customer);
+            _memoryCustomerRepository.Customers.Remove(customer);
         }
         else
         {
@@ -99,5 +113,12 @@ public class CustomerController : Controller
         }
 
         return Ok();
+    }
+
+    [HttpGet]
+    public IActionResult Details(long id)
+    {
+        var customer = _dbCustomerRepository.GetCustomer(id);
+        return View(CustomerModelMapping.Map(customer));
     }
 }
