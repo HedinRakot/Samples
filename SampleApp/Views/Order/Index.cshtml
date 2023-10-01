@@ -14,6 +14,9 @@
         <div class="col-12">
             <div style="float: left">@item.CustomerName</div>
             <div style="float: left; padding-left: 5em;">
+                @item.OrderNumber
+            </div>
+            <div style="float: left; padding-left: 5em;">
                 <a asp-action="Edit" asp-controller="Order" asp-route-id="@(item.Id)">edit</a>
             </div>
             <div style="float: left; padding-left: 5em;">

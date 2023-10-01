@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using SampleApp.Application;
 using SampleApp.Domain;
+using SampleApp.Domain.Repositories;
 using SampleApp.Models;
 using System.Security.Claims;
 
@@ -10,8 +11,8 @@ namespace SampleApp.Controllers;
 
 public class LoginController : Controller
 {
-    private CustomerRepository _customerRepository;
-    public LoginController(CustomerRepository customerRepository)
+    private ICustomerRepository _customerRepository;
+    public LoginController(ICustomerRepository customerRepository)
     {
         _customerRepository = customerRepository;
     }
@@ -30,7 +31,7 @@ public class LoginController : Controller
         {
             try
             {
-                var customer = _customerRepository.Customers.FirstOrDefault(x => x.Name == model.UserName);
+                var customer = _customerRepository.GetCustomers().FirstOrDefault(x => x.Name == model.UserName);
 
                 //throw new ArgumentException();
 
