@@ -16,6 +16,8 @@ public static class DbServiceCollectionExtensions
         });
 
         return result.AddScoped<ICustomerRepository, CustomerRepository>()
-            .AddScoped<IOrderRepository, OrderRepository>();
+            .AddScoped<IOrderRepository, OrderRepository>()
+            .AddScoped<IOrderHistoryRepository, OrderHistoryRepository>()
+            .AddScoped<ISqlUnitOfWork, SqlUnitOfWork>();
     }
 }

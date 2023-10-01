@@ -18,5 +18,12 @@ public class SampleAppDbContext : DbContext
     {
         modelBuilder.Entity<Customer>().ToTable("Customer");
         modelBuilder.Entity<Order>().ToTable("Order");
+
+        modelBuilder.Entity<Customer>()
+            .HasMany(o => o.Orders)
+            .WithOne(o => o.Customer)
+            .HasForeignKey(o => o.CustomerId)
+            .HasPrincipalKey(o => o.Id);
+
     }
 }

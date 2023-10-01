@@ -8,4 +8,6 @@ public class Customer
     public string Email { get; set; }
     public int Number { get; set; }
     public string CustomValidationField { get; set; }
+
+    public List<Order> Orders { get; set; }
 }
