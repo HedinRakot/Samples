@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Customer details";
+}
+@model CustomerModel
+
+@if (Model.Photo != null)
+{
+    <img src="data:image/png;base64, @(Model.Photo)" />
+}
+
+<input asp-for="Id" type="hidden" />
+
+@Html.Partial("_AddEdit.cshtml", Model)

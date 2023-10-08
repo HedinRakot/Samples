@@ -12,6 +12,7 @@ public static class DbServiceCollectionExtensions
     {
         var result = services.AddDbContext<SampleAppDbContext>(options =>
         {
+            //options.UseLazyLoadingProxies();
             options.UseSqlServer(configuration.GetConnectionString("SampleAppDb"));
         });
 

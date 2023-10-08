@@ -23,4 +23,6 @@ public class CustomerModel
 
     [Validation.CustomValidation(ErrorMessage = "Please enter Yury")]
     public string CustomValidationField { get; set; }
+
+    public string? Photo { get; set; }
 }

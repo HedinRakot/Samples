@@ -3,6 +3,8 @@ using SampleApp.Models;
 using SampleApp.Application;
 using SampleApp.Models.Mapping;
 using SampleApp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore.Query;
+using SampleApp.Database;
 
 namespace SampleApp.Controllers;
 
@@ -10,31 +12,29 @@ public class CustomerController : Controller
 {
     private CustomerRepository _memoryCustomerRepository;
     private IMapping<Domain.Customer, CustomerModel> _customerMapping;
+    private readonly ISqlUnitOfWork _unitOfWork;
     
     private readonly ICustomerRepository _dbCustomerRepository;
 
     public CustomerController(CustomerRepository customerRepository, 
         IMapping<Domain.Customer, CustomerModel> customerMapping,
-        ICustomerRepository dbCustomerRepository)
+        ICustomerRepository dbCustomerRepository,
+        ISqlUnitOfWork unitOfWork)
     {
         _memoryCustomerRepository = customerRepository;
         _customerMapping = customerMapping;
         _dbCustomerRepository = dbCustomerRepository;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
     public IActionResult Index()
     {
         var models = new List<CustomerModel>();
-        foreach (var item in _memoryCustomerRepository.Customers)
-        {
-            models.Add(CustomerModelMapping.Map(item));
-            //models.Add(item.ToModel());
-            //models.Add(_customerMapping.Map(item));
-        }
 
         foreach(var item in _dbCustomerRepository.GetCustomers())
         {
+            var addresses = _dbCustomerRepository.Addresses(item.Id);
             models.Add(item.ToModel());
         }
 
@@ -119,6 +119,41 @@ public class CustomerController : Controller
     public IActionResult Details(long id)
     {
         var customer = _dbCustomerRepository.GetCustomer(id);
-        return View(CustomerModelMapping.Map(customer));
+        return View(customer.ToModel());
+    }
+
+    [HttpGet]
+    public IActionResult UploadPhoto(long id)
+    {
+        return View(new CustomerModel
+        {
+            Id = id
+        });
+    }
+
+    [HttpPost]
+    public IActionResult UploadPhoto(
+        [FromForm]IFormFile photoFile,
+        [FromRoute]long id)
+    {
+        if (photoFile != null && photoFile.Length != 0)
+        {
+            var memoryStream = new MemoryStream();
+            photoFile.CopyTo(memoryStream);
+
+            var customer = _unitOfWork.CustomerRepository.GetCustomer(id);
+
+            var str = Convert.ToBase64String(memoryStream.ToArray());
+            byte[] bytes = memoryStream.ToArray();
+
+            customer.PhotoString = str;
+            customer.PhotoBinary = bytes;
+
+            _unitOfWork.SaveChanges();
+
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+        return View();
     }
 }

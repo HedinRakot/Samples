@@ -11,7 +11,8 @@ public static class CustomerModelMappingExtension
             LastName = customer.LastName,
             Number = customer.Number,
             Email = customer.Email,
-            CustomValidationField = customer.CustomValidationField
+            CustomValidationField = customer.CustomValidationField,
+            Photo = customer.PhotoString
         };
     }
 

@@ -1,4 +1,5 @@
-﻿using SampleApp.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using SampleApp.Domain;
 using SampleApp.Domain.Repositories;
 
 namespace SampleApp.Database.Repositories;
@@ -30,5 +31,17 @@ internal class CustomerRepository : ICustomerRepository
         var customer = _dbContext.Customers.FirstOrDefault(x => x.Id == id);
 
         return customer;
+    }
+
+    public List<Address> Addresses(long id)
+    {
+        var addressIds = _dbContext.CustomerAddresses
+            .Where(o => o.CustomersId == id)
+            .Select(o => o.AddressId)
+            .ToList();
+
+        var addresses = _dbContext.Addresses.Where(o => addressIds.Contains(id)).ToList();
+
+        return addresses;
     }
 }

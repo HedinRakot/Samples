@@ -9,5 +9,10 @@ public class Customer
     public int Number { get; set; }
     public string CustomValidationField { get; set; }
 
-    public List<Order> Orders { get; set; }
+    public virtual List<Order> Orders { get; set; }
+
+    public virtual List<Address> Address { get; set; }
+
+    public string? PhotoString { get; set; }
+    public byte[]? PhotoBinary { get; set; }
 }

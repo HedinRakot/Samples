@@ -1,0 +1,9 @@
+﻿@model CustomerModel
+
+<form enctype="multipart/form-data" method="post"
+      asp-action="UploadPhoto" asp-controller="Customer" asp-route-id="@Model.Id">
+    
+    <input type="file" name="photoFile"  />
+
+    <input type="submit" value="Upload" />
+</form>

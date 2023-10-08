@@ -20,6 +20,12 @@
             <div style="float: left; padding-left: 5em;">
                 <a href="#" data-id="@(item.Id)" data-customer-name="@item.Name" data-bs-toggle="modal" data-bs-target="#deleteCustomerDialog">delete</a>
             </div>
+            <div style="float: left; padding-left: 5em;">
+                <a asp-action="UploadPhoto" asp-controller="Customer" asp-route-id="@(item.Id)">upload photo</a>
+            </div>
+            <div style="float: left; padding-left: 5em;">
+                <a asp-action="Details" asp-controller="Customer" asp-route-id="@(item.Id)">Details</a>
+            </div>
         </div>
     </div>
 }

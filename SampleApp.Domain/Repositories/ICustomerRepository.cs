@@ -6,4 +6,6 @@ public interface ICustomerRepository
     void AddCustomer(Customer customer);
 
     Customer GetCustomer(long id);
+
+    List<Address> Addresses(long id);
 }
