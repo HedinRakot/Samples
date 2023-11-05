@@ -1,0 +1,39 @@
+﻿@{
+}
+@model CookieOrderModel
+
+<form asp-action="Edit" asp-controller="CookieOrder" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <input asp-for="Id" type="hidden" />
+
+    <select value="@(Model.CustomerId)" class="custom-select" id="CustomerId" name="CustomerId" data-type="DropDownList" data-val="true" data-val-required="Please select a customer">
+        <option value="">Please select</option>
+        @foreach (var item in Model.Customers)
+        {
+            @*string selectedStr = item.Id == Model.CustomerId ? "selected=\"selected\"" : "";*@
+
+            if (item.Id == Model.CustomerId)
+            {
+                <option value="@item.Id" selected="selected">@item.Name</option>
+            }
+            else
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        }
+    </select>
+    <i class="halflings halflings-menu-down"></i>
+    <div class="text-danger">
+        <span class="field-validation-valid" data-valmsg-for="CustomerId" data-valmsg-replace="true"></span>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label asp-for="OrderNumber">Ordernumber</label>
+            <input asp-for="OrderNumber" class="form-control" placeholder="" type="text" />
+            <span asp-validation-for="OrderNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input type="submit" value="Save" />
+</form>

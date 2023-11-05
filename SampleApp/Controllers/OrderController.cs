@@ -12,20 +12,31 @@ namespace SampleApp.Controllers
         private readonly ICustomerRepository _customerRepository;
         private readonly IOrderHistoryRepository _orderHistoryRepository;
         private readonly ISqlUnitOfWork _unitOfWork;
+        private readonly ILogger<OrderController> _logger;
+
         public OrderController(IOrderRepository orderRepository,
             ICustomerRepository customerRepository,
             IOrderHistoryRepository orderHistoryRepository,
-            ISqlUnitOfWork unitOfWork)
+            ISqlUnitOfWork unitOfWork,
+            ILogger<OrderController> logger)
         {
             _orderRepository = orderRepository;
             _customerRepository = customerRepository;
             _orderHistoryRepository = orderHistoryRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
+            _logger.LogCritical("Test Critical");
+            _logger.LogError("Test Error");
+            _logger.LogWarning("Test Warning");
+            _logger.LogInformation("Test Info message");
+            _logger.LogDebug("Test Debug");
+            _logger.Log(LogLevel.Trace, "Test Trace");
+
             var models = new List<OrderModel>();
             foreach (var item in _orderRepository.GetOrderWithCustomers())
             {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Logging.Console;
 using SampleApp.Application;
 using SampleApp.Authentication;
 using SampleApp.Database;
@@ -41,6 +42,8 @@ builder.Services.AddMvc(options =>
     options.Conventions.Add(new AuthorizeControllerModelConvention());
 });
 
+
+builder.Logging.AddSimpleConsole(i => i.ColorBehavior = LoggerColorBehavior.Enabled);
 
 var app = builder.Build();
 
