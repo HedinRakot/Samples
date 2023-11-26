@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging.Console;
 using SampleApp.Application;
 using SampleApp.Authentication;
@@ -7,7 +7,11 @@ using SampleApp.ErrorHandling;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    //ContentRootPath = AppContext.BaseDirectory, //notwendig für Hosting als Windows Service
+    Args = args
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -45,6 +49,9 @@ builder.Services.AddMvc(options =>
 
 builder.Logging.AddSimpleConsole(i => i.ColorBehavior = LoggerColorBehavior.Enabled);
 
+
+//builder.Host.UseWindowsService(); //notwendig für Hosting als Windows Service
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,7 +62,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -69,4 +76,4 @@ app.MapControllerRoute(
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.Run();
+await app.RunAsync();

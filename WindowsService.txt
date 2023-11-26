@@ -1,0 +1,5 @@
+New-Service -Name "SampleApp" -BinaryPathName "D:\Yura\Education\Samples\SampleApp\bin\Release\net6.0\publish\SampleApp.exe" -Credential "LAPTOP-96EULNQL\fotog" -Description "Sample App" -DisplayName "SampleApp" -StartupType Automatic
+
+Start-Service -Name "SampleApp"
+
+//  sc.exe delete "SampleApp"

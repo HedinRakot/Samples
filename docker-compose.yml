@@ -4,10 +4,10 @@ services:
   sampleapp:
     image: ${DOCKER_REGISTRY-}sampleapp
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_ENVIRONMENT=k8s
       - ASPNETCORE_URLS=http://+:80
     ports:
-      - "80"
+      - "5500:80"
     build:
       context: .
       dockerfile: SampleApp/Dockerfile
