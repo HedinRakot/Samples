@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  sampleapp:
+    image: ${DOCKER_REGISTRY-}sampleapp
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "80"
+    build:
+      context: .
+      dockerfile: SampleApp/Dockerfile

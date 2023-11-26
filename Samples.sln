@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.Application", "Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.Database", "SampleApp.Database\SampleApp.Database.csproj", "{26BBAE16-5ACC-45AF-AF5E-3604A4C454D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampeApp.Database.Migrations", "SampeApp.Database.Migrations\SampeApp.Database.Migrations.csproj", "{D5B3D03A-28DE-48B1-AB70-06E80937520F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampeApp.Database.Migrations", "SampeApp.Database.Migrations\SampeApp.Database.Migrations.csproj", "{D5B3D03A-28DE-48B1-AB70-06E80937520F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{9E717C90-F392-4FC4-B805-147C8FACE090}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		WindowsService.txt = WindowsService.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
