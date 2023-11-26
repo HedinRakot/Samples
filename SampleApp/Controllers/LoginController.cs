@@ -33,13 +33,18 @@ public class LoginController : Controller
             {
                 var customer = _customerRepository.GetCustomers().FirstOrDefault(x => x.Name == model.UserName);
 
-                //throw new ArgumentException();
+                if (customer != null && customer.ValidatePassword(model.Password))
+                {
+                    await SignIn(customer);
 
-                await SignIn(customer);
-
-                return RedirectToAction(nameof(CustomerController.Index), nameof(SampleApp.Domain.Customer));
+                    return RedirectToAction(nameof(CustomerController.Index), nameof(SampleApp.Domain.Customer));
+                }
+                else
+                {
+                    ModelState.AddModelError("Model", "User doesnt exist or password wrong");
+                }
             }
-            catch(NullReferenceException exception)
+            catch (NullReferenceException exception)
             {
                 ModelState.AddModelError("Model", "User doesnt exist");
                 //TODO Logging
@@ -47,7 +52,7 @@ public class LoginController : Controller
             //catch(Exception exception)
             //{
             //    ModelState.AddModelError("Model", "Unexpected error occured. Please try again later..");
-                //TODO Logging
+            //TODO Logging
             //}
         }
 

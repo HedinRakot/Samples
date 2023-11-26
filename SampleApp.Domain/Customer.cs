@@ -1,4 +1,8 @@
-﻿namespace SampleApp.Domain;
+﻿using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace SampleApp.Domain;
 
 public class Customer
 {
@@ -15,4 +19,24 @@ public class Customer
 
     public string? PhotoString { get; set; }
     public byte[]? PhotoBinary { get; set; }
+
+    public string Password { get; set; }
+
+    public string EncodePassword(string password)
+    {
+        var sha = SHA512.Create("SHA-512");
+        var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+        var result = Convert.ToBase64String(hash);
+
+        return result;
+    }
+
+    public bool ValidatePassword(string password)
+    {
+        var sha = SHA512.Create("SHA-512");
+        var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+        var encodedPassword = Convert.ToBase64String(hash);
+
+        return encodedPassword == Password;
+    }
 }

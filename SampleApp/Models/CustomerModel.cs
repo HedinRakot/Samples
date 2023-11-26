@@ -25,4 +25,6 @@ public class CustomerModel
     public string CustomValidationField { get; set; }
 
     public string? Photo { get; set; }
+
+    public string Password { get; set; }
 }

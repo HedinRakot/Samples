@@ -5,6 +5,8 @@ using SampleApp.Models.Mapping;
 using SampleApp.Domain.Repositories;
 using Microsoft.EntityFrameworkCore.Query;
 using SampleApp.Database;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SampleApp.Controllers;
 
@@ -13,10 +15,10 @@ public class CustomerController : Controller
     private CustomerRepository _memoryCustomerRepository;
     private IMapping<Domain.Customer, CustomerModel> _customerMapping;
     private readonly ISqlUnitOfWork _unitOfWork;
-    
+
     private readonly ICustomerRepository _dbCustomerRepository;
 
-    public CustomerController(CustomerRepository customerRepository, 
+    public CustomerController(CustomerRepository customerRepository,
         IMapping<Domain.Customer, CustomerModel> customerMapping,
         ICustomerRepository dbCustomerRepository,
         ISqlUnitOfWork unitOfWork)
@@ -32,7 +34,7 @@ public class CustomerController : Controller
     {
         var models = new List<CustomerModel>();
 
-        foreach(var item in _dbCustomerRepository.GetCustomers())
+        foreach (var item in _dbCustomerRepository.GetCustomers())
         {
             var addresses = _dbCustomerRepository.Addresses(item.Id);
             models.Add(item.ToModel());
@@ -54,12 +56,8 @@ public class CustomerController : Controller
         {
             var newCustomer = CustomerModelMapping.Map(model);
 
-            //var lastId = _memoryCustomerRepository.Customers.Count != 0 ? _memoryCustomerRepository.Customers.Max(x => x.Id) : 0;
-
-            ////var newCustomer = _customerMapping.Map(model);
-            //newCustomer.Id = lastId + 1;
-
-            //_memoryCustomerRepository.Customers.Add(newCustomer);
+            var password = newCustomer.EncodePassword(newCustomer.Password);
+            newCustomer.Password = password;
 
             _dbCustomerRepository.AddCustomer(newCustomer);
 
@@ -89,7 +87,7 @@ public class CustomerController : Controller
             var editedCustomer = CustomerModelMapping.Map(model);
             //var editedCustomer = model.ToDomain();
             _memoryCustomerRepository.Customers.Insert(index, editedCustomer);
-            
+
             //customer = _customerMapping.Map(model);
 
             return RedirectToAction(nameof(Index));
@@ -133,8 +131,8 @@ public class CustomerController : Controller
 
     [HttpPost]
     public IActionResult UploadPhoto(
-        [FromForm]IFormFile photoFile,
-        [FromRoute]long id)
+        [FromForm] IFormFile photoFile,
+        [FromRoute] long id)
     {
         if (photoFile != null && photoFile.Length != 0)
         {

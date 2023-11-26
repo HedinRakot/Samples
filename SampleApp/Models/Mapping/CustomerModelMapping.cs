@@ -24,7 +24,8 @@ public static class CustomerModelMapping
             LastName = customerModel.LastName,
             Number = customerModel.Number,
             Email = customerModel.Email,
-            CustomValidationField = customerModel.CustomValidationField
+            CustomValidationField = customerModel.CustomValidationField,
+            Password = customerModel.Password
         };
     }
 }
