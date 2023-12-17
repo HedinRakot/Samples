@@ -3,6 +3,7 @@ using SampleApp.Models;
 using SampleApp.Domain.Repositories;
 using SampleApp.Models.Mapping;
 using SampleApp.Database;
+using SampleApp.Domain;
 
 namespace SampleApp.Controllers
 {
@@ -13,18 +14,21 @@ namespace SampleApp.Controllers
         private readonly IOrderHistoryRepository _orderHistoryRepository;
         private readonly ISqlUnitOfWork _unitOfWork;
         private readonly ILogger<OrderController> _logger;
+        private readonly ICouponCountService _couponCountService;
 
         public OrderController(IOrderRepository orderRepository,
             ICustomerRepository customerRepository,
             IOrderHistoryRepository orderHistoryRepository,
             ISqlUnitOfWork unitOfWork,
-            ILogger<OrderController> logger)
+            ILogger<OrderController> logger,
+            ICouponCountService couponCountService)
         {
             _orderRepository = orderRepository;
             _customerRepository = customerRepository;
             _orderHistoryRepository = orderHistoryRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _couponCountService = couponCountService;
         }
 
         [HttpGet]
@@ -125,6 +129,14 @@ namespace SampleApp.Controllers
 
             model.Customers = GetCustomerModels();
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ApplyCode(string code)
+        {
+            _couponCountService.UpdateCouponCount(code);
+
+            return Ok();
         }
 
         //[HttpDelete]

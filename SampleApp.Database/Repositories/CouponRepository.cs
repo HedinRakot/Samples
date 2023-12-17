@@ -15,7 +15,7 @@ internal class CouponRepository : ICouponRepository
     public Coupon UpdateCouponCount(Coupon coupon)
     {
         if (coupon.AppliedCount == null)
-            coupon.AppliedCount = 0;
+            coupon.AppliedCount = 1;
         else
             coupon.AppliedCount++;
 

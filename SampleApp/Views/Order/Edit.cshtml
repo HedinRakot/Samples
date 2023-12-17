@@ -35,5 +35,29 @@
         </div>
     </div>
 
+    <button type="button" class="btn btn-secondary" onclick="applyCode()">Apply code</button>
+    
     <input type="submit" value="Save" />
 </form>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        function applyCode() {
+            var id = $('#elementId').val();
+
+            $.ajax({
+                url: '@Url.Action("ApplyCode", "Order")/',
+                data: {code: '123'},
+                type: 'POST',
+                success: function (result) {
+                    window.location = '@Url.Action("Index", "Order")';
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+    </script>
+}

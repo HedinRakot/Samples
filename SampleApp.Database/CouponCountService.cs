@@ -2,20 +2,15 @@
 using Microsoft.Extensions.Logging;
 using SampleApp.Database.Concurrency;
 using SampleApp.Database.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SampleApp.Domain;
 
 namespace SampleApp.Database;
 
-internal class CouponCountService
+internal class CouponCountService : ICouponCountService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<CouponCountService> _logger;
     private readonly SemaphoreSlim _lock = new(1, 1);
-    private int? _instanzId;
 
     public CouponCountService(IServiceProvider serviceProvider, ILogger<CouponCountService> logger)
     {
@@ -23,38 +18,33 @@ internal class CouponCountService
         _logger = logger;
     }
 
-    public async ValueTask<int> GetInstanzId(CancellationToken cancellationToken)
+    public void UpdateCouponCount(string code)
     {
-        if (_instanzId != null)
-        {
-            return _instanzId.Value;
-        }
-
         try
         {
-            await _lock.WaitAsync(cancellationToken);
-            _instanzId = await CreateNewInstanzId(cancellationToken);
+            _lock.Wait();
+
+            ConcurrencyUtilities.ExecuteAsync(async () =>
+            {
+                using var scope = _serviceProvider.CreateScope();
+                await using var dbContext = scope.ServiceProvider.GetRequiredService<SampleAppDbContext>();
+
+                var coupon = dbContext.Coupons.Where(o => o.Code == code).FirstOrDefault();
+
+                if (coupon != null)
+                {
+                    var repository = new CouponRepository(dbContext);
+
+                    repository.UpdateCouponCount(coupon);
+
+                    dbContext.SaveChangesAsyncWithConcurrencyCheckAsync();
+                }
+
+            }, _logger);
         }
         finally
         {
             _lock.Release();
         }
-
-        return _instanzId.Value;
     }
-
-    private Task<int> CreateNewInstanzId(CancellationToken cancellationToken) =>
-        ConcurrencyUtilities.ExecuteAsync(async () =>
-        {
-            using var scope = _serviceProvider.CreateScope();
-            await using var dbContext = scope.ServiceProvider.GetRequiredService<SampleAppDbContext>();
-
-            var repository = new CouponRepository(dbContext);
-
-            var instanzId = await repository.UpdateCouponCount(cancellationToken);
-
-            await dbContext.SaveChangesAsyncWithConcurrencyCheckAsync(cancellationToken);
-
-            return instanzId;
-        }, _logger);
 }

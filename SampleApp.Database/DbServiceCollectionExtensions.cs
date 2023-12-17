@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SampleApp.Database.Repositories;
+using SampleApp.Domain;
 using SampleApp.Domain.Repositories;
 
 namespace SampleApp.Database;
@@ -19,6 +20,8 @@ public static class DbServiceCollectionExtensions
         return result.AddScoped<ICustomerRepository, CustomerRepository>()
             .AddScoped<IOrderRepository, OrderRepository>()
             .AddScoped<IOrderHistoryRepository, OrderHistoryRepository>()
+            .AddScoped<ICouponRepository, CouponRepository>()
+            .AddScoped<ICouponCountService, CouponCountService>()
             .AddScoped<ISqlUnitOfWork, SqlUnitOfWork>();
     }
 }

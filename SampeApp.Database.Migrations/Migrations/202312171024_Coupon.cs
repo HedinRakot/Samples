@@ -10,9 +10,10 @@ public class Coupon : AutoReversingMigration
     {
         Create.Table("Coupon")
         .WithColumn("Id").AsInt64().NotNullable().Identity().PrimaryKey()
+        .WithColumn("Code").AsString(100).NotNullable()
         .WithColumn("Discount").AsInt32().NotNullable()
         .WithColumn("Count").AsInt32().Nullable()
         .WithColumn("AppliedCount").AsInt32().Nullable()
-        .WithColumn("Version").AsTime().NotNullable();
+        .WithColumn("Version").AsCustom("rowversion").NotNullable();
     }
 }
