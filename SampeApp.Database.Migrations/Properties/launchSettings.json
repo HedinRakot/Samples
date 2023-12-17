@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "SampeApp.Database.Migrations": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Azure"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
