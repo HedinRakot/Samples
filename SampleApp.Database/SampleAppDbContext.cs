@@ -15,6 +15,7 @@ public class SampleAppDbContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,5 +39,9 @@ public class SampleAppDbContext : DbContext
         //        l => l.HasOne(typeof(Customer)).WithMany().HasForeignKey("CustomerId").HasPrincipalKey(nameof(Customer.Id)),
         //        r => r.HasOne(typeof(Address)).WithMany().HasForeignKey("AddressId").HasPrincipalKey(nameof(Address.Id)),
         //        j => j.HasKey("CustomerId", "AddressId"));
+
+
+        modelBuilder.Entity<Coupon>().ToTable("Coupon");
+        modelBuilder.Entity<Coupon>().Property("Version").IsRowVersion();
     }
 }
