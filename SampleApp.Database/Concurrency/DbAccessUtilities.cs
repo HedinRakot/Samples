@@ -14,7 +14,6 @@ public static class DbAccessUtilities
         catch (DbUpdateConcurrencyException e)
         {
             throw new UpdateConcurrentException(e);
-
         }
         catch (DbUpdateException e) when (e.InnerException is SqlException sqlException &&
                                           sqlException.IsPrimaryKeyViolationError())
