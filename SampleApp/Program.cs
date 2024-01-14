@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Login/SignIn/";
         options.AccessDeniedPath = "/Error/Forbidden/";
     })
-    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationSheme.DefaultSheme, null);
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationScheme.DefaultScheme, null);
 
 builder.Services.AddAuthorization(o =>
 {

@@ -28,13 +28,15 @@ internal class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenticatio
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var identities = new List<ClaimsIdentity> { identity };
-            var principal = new ClaimsPrincipal(identities);
-            var ticket = new AuthenticationTicket(principal, ApiKeyAuthenticationSheme.DefaultSheme);
+            //var identities = new List<ClaimsIdentity> { identity }; // für mehrere Identities
+            //var principal = new ClaimsPrincipal(identities);
+
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, ApiKeyAuthenticationScheme.DefaultScheme);
 
             return AuthenticateResult.Success(ticket);
         }
 
-        return AuthenticateResult.NoResult();
+        return AuthenticateResult.Fail("No Api key or key is wrong");
     }
 }
