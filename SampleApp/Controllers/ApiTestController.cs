@@ -3,42 +3,50 @@ using SampleApp.Models;
 using SampleApp.Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using SampleApp.Authentication;
+using System.Text.Json;
+using SampleApp.Application;
 
 namespace SampleApp.Controllers
 {
     public class ApiTestController : Controller
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderService _orderService;
 
-        public ApiTestController(IOrderRepository orderRepository)
+        public ApiTestController(IOrderService orderService)
         {
-            _orderRepository = orderRepository;
+            _orderService = orderService;
         }
 
         [HttpGet]
-        //[AllowAnonymous]
         [Authorize(AuthenticationSchemes = ApiKeyAuthenticationScheme.DefaultScheme)]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //var apiKey = Request.Headers.FirstOrDefault(o => o.Key == "x-api-key");
+            var orders = await _orderService.GetOrders();
 
-            //if(apiKey.Value != "1234567890")
-            //{ 
-            //    return Unauthorized(); 
-            //}
+            //TODO map from Domain.Order to OrderModel
 
-            var models = new List<OrderModel>();
-            foreach (var item in _orderRepository.GetOrderWithCustomers())
+
+            return Ok(orders);
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = ApiKeyAuthenticationScheme.DefaultScheme)]
+        public async Task<IActionResult> Add(OrderModel model)
+        {
+            if (ModelState.IsValid)
             {
-                models.Add(new OrderModel
+                var newOrder = new Domain.Order
                 {
-                    Id = item.Id,
-                    CustomerId = item.Customer.Id,
-                    OrderNumber = item.OrderNumber
-                });
+                    CustomerId = model.CustomerId,
+                    OrderNumber = model.OrderNumber
+                };
+
+                newOrder = await _orderService.AddOrder(newOrder);
+
+                return Ok(newOrder);
             }
 
-            return Ok(models);
+            return BadRequest();
         }
     }
 }

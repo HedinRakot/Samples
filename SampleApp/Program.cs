@@ -7,6 +7,7 @@ using SampleApp.Database;
 using SampleApp.ErrorHandling;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -15,13 +16,24 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 });
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+    .AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    }
+);
 
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<OrderRepository>();
+
 builder.Services.AddSingleton<IMapping<SampleApp.Domain.Customer, CustomerModel>, CustomerModelMappingInterface>();
 
+builder.Services.AddApplication();
+
 builder.Services.AddDatabase(builder.Configuration);
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
