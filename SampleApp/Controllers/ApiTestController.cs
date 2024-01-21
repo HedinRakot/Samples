@@ -31,7 +31,7 @@ namespace SampleApp.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = ApiKeyAuthenticationScheme.DefaultScheme)]
-        public async Task<IActionResult> Add(OrderModel model)
+        public async Task<IActionResult> Add([FromBody]OrderModel model)
         {
             if (ModelState.IsValid)
             {
