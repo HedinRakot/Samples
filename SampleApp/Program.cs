@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging.Console;
 using SampleApp.Application;
 using SampleApp.Authentication;
 using SampleApp.Database;
+using SampleApp.Domain.Settings;
 using SampleApp.ErrorHandling;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -60,6 +60,9 @@ builder.Services.AddMvc(options =>
     options.Conventions.Add(new AuthorizeControllerModelConvention());
 });
 
+
+builder.Services.Configure<ApiKeyAuthenticationOptions>(
+    builder.Configuration.GetSection(ApiKeyAuthenticationOptions.SectionName));
 
 builder.Logging.AddSimpleConsole(i => i.ColorBehavior = LoggerColorBehavior.Enabled);
 

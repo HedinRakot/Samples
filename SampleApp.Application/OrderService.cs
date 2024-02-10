@@ -1,5 +1,7 @@
-﻿using SampleApp.Domain;
+﻿using Microsoft.Extensions.Options;
+using SampleApp.Domain;
 using SampleApp.Domain.Exceptions;
+using SampleApp.Domain.Settings;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -7,6 +9,13 @@ namespace SampleApp.Application;
 
 internal class OrderService : IOrderService
 {
+    private readonly IOptions<ApiKeyAuthenticationOptions> _options;
+
+    public OrderService(IOptions<ApiKeyAuthenticationOptions> options)
+    {
+        _options = options;   
+    }
+
     public async Task<List<Order>> GetOrders()
     {
         try
