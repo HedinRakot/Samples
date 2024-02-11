@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using FluentAssertions.Common;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
+using SampleApp.Application;
+using SampleApp.Database;
 using System.Reflection;
 
 namespace SampleApp.IntegrationTests.TestSetup;
@@ -9,6 +14,8 @@ namespace SampleApp.IntegrationTests.TestSetup;
 public class IntegrationTestsFixture : WebApplicationFactory<Program>
 {
     private readonly DatabaseSetup _dbSetup;
+    public IOrderService TestOrderService = Substitute.For<IOrderService>();
+
     public IntegrationTestsFixture()
     {
         _dbSetup = new DatabaseSetup("appsettings.integrationtests.json");
@@ -46,8 +53,17 @@ public class IntegrationTestsFixture : WebApplicationFactory<Program>
             .ConfigureTestServices(services =>
             {
                 //TODO mock api
+                services.AddSingleton<IOrderService>(TestOrderService);
             });
 
         base.ConfigureWebHost(builder);
+    }
+
+    public Domain.Order? GetOrder(string orderNumber)
+    {
+        using var scope = Services.CreateScope();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<SampleAppDbContext>();
+
+        return dbContext.Orders.FirstOrDefault(o => o.OrderNumber == orderNumber);
     }
 }

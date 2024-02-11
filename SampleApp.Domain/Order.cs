@@ -8,4 +8,9 @@ public class Order
     public long CustomerId { get; set; }
 
     public virtual List<OrderHistory> History { get; set; } = new List<OrderHistory>();
+
+    public bool HasHistory()
+    {
+        return History.Count > 0;
+    }
 }
