@@ -94,3 +94,12 @@ app.MapControllerRoute(
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 await app.RunAsync();
+
+
+namespace SampleApp
+{
+    public class Program
+    {
+
+    }
+}
