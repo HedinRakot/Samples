@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging.Console;
+using NServiceBus;
 using SampleApp.Application;
 using SampleApp.Authentication;
 using SampleApp.Database;
 using SampleApp.Domain.Settings;
 using SampleApp.ErrorHandling;
+using SampleApp.Messages;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
 
@@ -67,6 +69,26 @@ builder.Services.Configure<ApiKeyAuthenticationOptions>(
 builder.Logging.AddSimpleConsole(i => i.ColorBehavior = LoggerColorBehavior.Enabled);
 
 
+
+
+
+//NServiceBus
+var endpointConfiguration = new EndpointConfiguration("SampleApp");
+
+// Choose JSON to serialize and deserialize messages
+endpointConfiguration.UseSerialization<NServiceBus.SystemJsonSerializer>();
+
+var transport = endpointConfiguration.UseTransport<LearningTransport>();
+
+var routing = transport.Routing();
+routing.RouteToEndpoint(typeof(TestCommand), "SampleApi");
+
+var endpointInstance = await NServiceBus.Endpoint.Start(endpointConfiguration)
+    .ConfigureAwait(false);
+
+builder.Services.AddSingleton<IMessageSession>(endpointInstance);
+
+
 //builder.Host.UseWindowsService(); //notwendig für Hosting als Windows Service
 
 var app = builder.Build();
@@ -95,6 +117,9 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 await app.RunAsync();
 
+
+await endpointInstance.Stop()
+    .ConfigureAwait(false);
 
 namespace SampleApp
 {
