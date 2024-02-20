@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging.Console;
 using NServiceBus;
 using SampleApi;
@@ -9,6 +10,7 @@ using SampleApi.Database;
 using SampleApi.ErrorHandling;
 using SampleApi.Models;
 using SampleApi.Models.Mapping;
+using SampleApp.Messages;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -57,18 +59,44 @@ builder.Logging.AddSimpleConsole(i => i.ColorBehavior = LoggerColorBehavior.Enab
 
 //NServiceBus
 var endpointConfiguration = new EndpointConfiguration("SampleApi");
+endpointConfiguration.SendFailedMessagesTo("error");
+endpointConfiguration.AuditProcessedMessagesTo("audit");
+endpointConfiguration.EnableInstallers();
 
 // Choose JSON to serialize and deserialize messages
 endpointConfiguration.UseSerialization<NServiceBus.SystemJsonSerializer>();
 
-var transport = endpointConfiguration.UseTransport<LearningTransport>();
+var nserviceBusConnectionString = builder.Configuration.GetConnectionString("NServiceBus");
 
-var endpointInstance = await NServiceBus.Endpoint.Start(endpointConfiguration)
-    .ConfigureAwait(false);
+var transportConfig = new NServiceBus.SqlServerTransport(nserviceBusConnectionString)
+{
+    DefaultSchema = "dbo",
+    TransportTransactionMode = TransportTransactionMode.SendsAtomicWithReceive,
+    Subscriptions =
+    {
+        CacheInvalidationPeriod = TimeSpan.FromMinutes(1),
+        SubscriptionTableName = new NServiceBus.Transport.SqlServer.SubscriptionTableName(
+            table: "Subscriptions",
+            schema: "dbo")
+    }
+};
 
-builder.Services.AddSingleton<IMessageSession>(endpointInstance);
-//builder.Services.AddSingleton(typeof(TestEventHandler));
+transportConfig.SchemaAndCatalog.UseSchemaForQueue("error", "dbo");
+transportConfig.SchemaAndCatalog.UseSchemaForQueue("audit", "dbo");
 
+var transport = endpointConfiguration.UseTransport<SqlServerTransport>(transportConfig);
+transport.RouteToEndpoint(typeof(TestCommand), "SampleApi");
+
+//persistence
+var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
+var dialect = persistence.SqlDialect<SqlDialect.MsSqlServer>();
+dialect.Schema("dbo");
+persistence.ConnectionBuilder(() => new SqlConnection(nserviceBusConnectionString));
+persistence.TablePrefix("");
+
+await SqlServerHelper.CreateSchema(nserviceBusConnectionString, "dbo");
+
+var endpointInstance = await NServiceBus.Endpoint.Start(endpointConfiguration);
 
 
 //builder.Host.UseWindowsService(); //notwendig für Hosting als Windows Service
