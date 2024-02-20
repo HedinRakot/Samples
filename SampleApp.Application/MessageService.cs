@@ -17,19 +17,20 @@ internal class MessageService : IMessageService
     {
         try
         {
+            var count = 101;
             await _messageContext.Publish(new TestEvent
             {
-                Count = 100
+                Count = count
             });
 
             await _messageContext.Send(new TestCommand
             {
-                Count = 100
+                Count = count
             });
         }
         catch (Exception ex)
         {
-            throw new DomainException($"Es ist ein unerwarteter Fehler beim SampleApi Service Aufruf aufgetreten.", ex);
+            throw new DomainException($"Es ist ein unerwarteter Fehler beim Publish/Send aufgetreten.", ex);
         }
     }
 }

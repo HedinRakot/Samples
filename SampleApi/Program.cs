@@ -67,8 +67,6 @@ var endpointInstance = await NServiceBus.Endpoint.Start(endpointConfiguration)
     .ConfigureAwait(false);
 
 builder.Services.AddSingleton<IMessageSession>(endpointInstance);
-//builder.Services.AddSingleton(typeof(TestEventHandler));
-
 
 
 //builder.Host.UseWindowsService(); //notwendig für Hosting als Windows Service
