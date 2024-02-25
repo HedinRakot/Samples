@@ -19,9 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{9E717C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApi.Database.Migrations", "SampleApi.Database.Migrations\SampleApi.Database.Migrations.csproj", "{3A07AC03-4272-4C02-B561-789FD9B8AEB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApi.NServiceBus.Input", "SampleApi.NServiceBus.Input\SampleApi.NServiceBus.Input.csproj", "{BF6892A0-D499-4EE2-A48C-F5063018B810}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.Messages", "..\Samples\SampleApp.Messages\SampleApp.Messages.csproj", "{1E0FD5D5-282D-4B90-960A-E09D8C5B2B0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApi.NServiceBus.Input", "SampleApi.NServiceBus.Input\SampleApi.NServiceBus.Input.csproj", "{BF6892A0-D499-4EE2-A48C-F5063018B810}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +51,6 @@ Global
 		{BF6892A0-D499-4EE2-A48C-F5063018B810}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF6892A0-D499-4EE2-A48C-F5063018B810}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF6892A0-D499-4EE2-A48C-F5063018B810}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E0FD5D5-282D-4B90-960A-E09D8C5B2B0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E0FD5D5-282D-4B90-960A-E09D8C5B2B0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E0FD5D5-282D-4B90-960A-E09D8C5B2B0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E0FD5D5-282D-4B90-960A-E09D8C5B2B0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
