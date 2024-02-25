@@ -25,7 +25,9 @@ builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<OrderRepository>();
 builder.Services.AddSingleton<IMapping<SampleApi.Domain.Customer, CustomerModel>, CustomerModelMappingInterface>();
 
+//layers
 builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddApplication();
 
 builder.Services.AddAuthentication(ApiKeyAuthenticationScheme.DefaultScheme)
     .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationScheme.DefaultScheme, null);
@@ -95,7 +97,8 @@ persistence.TablePrefix("");
 
 await SqlServerHelper.CreateSchema(nserviceBusConnectionString, "dbo");
 
-var endpointInstance = await NServiceBus.Endpoint.Start(endpointConfiguration);
+var endpointContainer = EndpointWithExternallyManagedContainer.Create(endpointConfiguration, builder.Services);
+var endpointInstance = await endpointContainer.Start(builder.Services.BuildServiceProvider());
 
 
 //builder.Host.UseWindowsService(); //notwendig für Hosting als Windows Service

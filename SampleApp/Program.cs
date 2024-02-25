@@ -114,8 +114,8 @@ persistence.TablePrefix("");
 
 await SqlServerHelper.CreateSchema(nserviceBusConnectionString, "dbo");
 
-var endpointInstance = await NServiceBus.Endpoint.Start(endpointConfiguration)
-    .ConfigureAwait(false);
+var endpointContainer = EndpointWithExternallyManagedContainer.Create(endpointConfiguration, builder.Services);
+var endpointInstance = await endpointContainer.Start(builder.Services.BuildServiceProvider());
 
 
 builder.Services.AddSingleton<NServiceBus.IMessageSession>(endpointInstance);
