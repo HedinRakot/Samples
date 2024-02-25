@@ -85,7 +85,6 @@ transportConfig.SchemaAndCatalog.UseSchemaForQueue("error", "dbo");
 transportConfig.SchemaAndCatalog.UseSchemaForQueue("audit", "dbo");
 
 var transport = endpointConfiguration.UseTransport<SqlServerTransport>(transportConfig);
-transport.RouteToEndpoint(typeof(TestCommand), "SampleApi");
 
 //persistence
 var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();

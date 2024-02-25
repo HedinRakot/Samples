@@ -100,11 +100,6 @@ var transportConfig = new NServiceBus.SqlServerTransport(nserviceBusConnectionSt
 
 transportConfig.SchemaAndCatalog.UseSchemaForQueue("error", "dbo");
 transportConfig.SchemaAndCatalog.UseSchemaForQueue("audit", "dbo");
-//transport.SchemaAndCatalog.UseSchemaForQueue("Samples.Sql.Sender", "sender");
-
-//TEST Transport var transport = endpointConfiguration.UseTransport<LearningTransport>();
-//var routing = transport.Routing();
-//routing.RouteToEndpoint(typeof(TestCommand), "SampleApi");
 
 
 var transport = endpointConfiguration.UseTransport<SqlServerTransport>(transportConfig);
