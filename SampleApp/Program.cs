@@ -30,9 +30,6 @@ builder.Services
     }
 );
 
-builder.Services.AddSingleton<CustomerRepository>();
-builder.Services.AddSingleton<OrderRepository>();
-
 builder.Services.AddSingleton<IMapping<SampleApp.Domain.Customer, CustomerModel>, CustomerModelMappingInterface>();
 
 builder.Services.AddApplication();
@@ -45,7 +42,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.Cookie.HttpOnly = true;
         //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SameSite = SameSiteMode.Unspecified;
         options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
         options.LoginPath = "/Login/SignIn/";
         options.AccessDeniedPath = "/Error/Forbidden/";

@@ -1,29 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SampleApp.Models;
-using SampleApp.Application;
-using SampleApp.Models.Mapping;
-using SampleApp.Domain.Repositories;
-using Microsoft.EntityFrameworkCore.Query;
 using SampleApp.Database;
-using System.Security.Cryptography;
-using System.Text;
+using SampleApp.Domain.Repositories;
+using SampleApp.Models;
+using SampleApp.Models.Mapping;
 
 namespace SampleApp.Controllers;
 
 public class CustomerController : Controller
 {
-    private CustomerRepository _memoryCustomerRepository;
     private IMapping<Domain.Customer, CustomerModel> _customerMapping;
     private readonly ISqlUnitOfWork _unitOfWork;
 
     private readonly ICustomerRepository _dbCustomerRepository;
 
-    public CustomerController(CustomerRepository customerRepository,
+    public CustomerController(
         IMapping<Domain.Customer, CustomerModel> customerMapping,
         ICustomerRepository dbCustomerRepository,
         ISqlUnitOfWork unitOfWork)
     {
-        _memoryCustomerRepository = customerRepository;
         _customerMapping = customerMapping;
         _dbCustomerRepository = dbCustomerRepository;
         _unitOfWork = unitOfWork;
@@ -67,51 +61,51 @@ public class CustomerController : Controller
         return View();
     }
 
-    [HttpGet]
-    public IActionResult Edit(long id)
-    {
-        var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == id);
-        return View(CustomerModelMapping.Map(customer));
-        //return View(_customerMapping.Map(customer));
-    }
+    //[HttpGet]
+    //public IActionResult Edit(long id)
+    //{
+    //    var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == id);
+    //    return View(CustomerModelMapping.Map(customer));
+    //    //return View(_customerMapping.Map(customer));
+    //}
 
-    [HttpPost]
-    public IActionResult Edit(CustomerModel model)
-    {
-        if (ModelState.IsValid)
-        {
-            var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == model.Id);
-            var index = _memoryCustomerRepository.Customers.IndexOf(customer);
-            _memoryCustomerRepository.Customers.Remove(customer);
+    //[HttpPost]
+    //public IActionResult Edit(CustomerModel model)
+    //{
+    //    if (ModelState.IsValid)
+    //    {
+    //        var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == model.Id);
+    //        var index = _memoryCustomerRepository.Customers.IndexOf(customer);
+    //        _memoryCustomerRepository.Customers.Remove(customer);
 
-            var editedCustomer = CustomerModelMapping.Map(model);
-            //var editedCustomer = model.ToDomain();
-            _memoryCustomerRepository.Customers.Insert(index, editedCustomer);
+    //        var editedCustomer = CustomerModelMapping.Map(model);
+    //        //var editedCustomer = model.ToDomain();
+    //        _memoryCustomerRepository.Customers.Insert(index, editedCustomer);
 
-            //customer = _customerMapping.Map(model);
+    //        //customer = _customerMapping.Map(model);
 
-            return RedirectToAction(nameof(Index));
-        }
+    //        return RedirectToAction(nameof(Index));
+    //    }
 
-        return View();
-    }
+    //    return View();
+    //}
 
-    [HttpDelete]
-    public IActionResult Delete(long id)
-    {
-        var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == id);
+    //[HttpDelete]
+    //public IActionResult Delete(long id)
+    //{
+    //    var customer = _memoryCustomerRepository.Customers.FirstOrDefault(x => x.Id == id);
 
-        if (customer != null)
-        {
-            _memoryCustomerRepository.Customers.Remove(customer);
-        }
-        else
-        {
-            return BadRequest(new { errorMessage = "Element was not found" });
-        }
+    //    if (customer != null)
+    //    {
+    //        _memoryCustomerRepository.Customers.Remove(customer);
+    //    }
+    //    else
+    //    {
+    //        return BadRequest(new { errorMessage = "Element was not found" });
+    //    }
 
-        return Ok();
-    }
+    //    return Ok();
+    //}
 
     [HttpGet]
     public IActionResult Details(long id)
