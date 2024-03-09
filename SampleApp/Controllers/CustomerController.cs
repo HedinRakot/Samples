@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SampleApp.Application;
 using SampleApp.Database;
 using SampleApp.Domain.Repositories;
 using SampleApp.Models;
@@ -12,23 +13,28 @@ public class CustomerController : Controller
     private readonly ISqlUnitOfWork _unitOfWork;
 
     private readonly ICustomerRepository _dbCustomerRepository;
+    private readonly ICache _cache;
 
     public CustomerController(
         IMapping<Domain.Customer, CustomerModel> customerMapping,
         ICustomerRepository dbCustomerRepository,
-        ISqlUnitOfWork unitOfWork)
+        ISqlUnitOfWork unitOfWork,
+        ICache cache)
     {
         _customerMapping = customerMapping;
         _dbCustomerRepository = dbCustomerRepository;
         _unitOfWork = unitOfWork;
+        _cache = cache;
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var models = new List<CustomerModel>();
 
-        foreach (var item in _dbCustomerRepository.GetCustomers())
+        var customers = await _cache.GetCustomers();
+
+        foreach (var item in customers)
         {
             var addresses = _dbCustomerRepository.Addresses(item.Id);
             models.Add(item.ToModel());
