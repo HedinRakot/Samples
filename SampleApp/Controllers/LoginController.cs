@@ -31,7 +31,7 @@ public class LoginController : Controller
         {
             try
             {
-                var customer = _customerRepository.GetCustomers().FirstOrDefault(x => x.Name == model.UserName);
+                var customer = _customerRepository.GetCustomers().FirstOrDefault(x => x.Email == model.UserName);
 
                 if (customer != null && customer.ValidatePassword(model.Password))
                 {
