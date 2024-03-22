@@ -13,11 +13,11 @@ public static class DbServiceCollectionExtensions
     {
         var result = services.AddDbContext<SampleAppDbContext>(options =>
         {
-            //options.UseLazyLoadingProxies();
             options.UseSqlServer(configuration.GetConnectionString("SampleAppDb"));
         });
 
-        return result.AddScoped<ICustomerRepository, CustomerRepository>()
+        return result
+            .AddScoped<ICustomerRepository, CustomerRepository>()
             .AddScoped<IOrderRepository, OrderRepository>()
             .AddScoped<IOrderHistoryRepository, OrderHistoryRepository>()
             .AddScoped<ICouponRepository, CouponRepository>()
