@@ -1,20 +1,18 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Options;
 using SampleApp.Domain;
 using SampleApp.Domain.Exceptions;
 using SampleApp.Domain.Settings;
-using System.Text.Json;
 
 namespace SampleApp.Application;
 
-internal class OrderService : IOrderService
+internal class OrderHttpClient : IOrderHttpClient
 {
     private readonly IOptions<ApiKeyAuthenticationOptions> _options;
+    private readonly HttpClient _httpClient;
 
-    private readonly IOrderHttpClient _httpClient;
-
-    public OrderService(IOptions<ApiKeyAuthenticationOptions> options,
-        IOrderHttpClient httpClient
-        )
+    public OrderHttpClient(IOptions<ApiKeyAuthenticationOptions> options,
+        HttpClient httpClient)
     {
         _options = options;
         _httpClient = httpClient;
@@ -22,21 +20,11 @@ internal class OrderService : IOrderService
 
     public async Task<List<Order>> GetOrders()
     {
-        return await _httpClient.GetOrders();
-    }
-
-    public async Task<Order> AddOrder(Order order)
-    {
         try
         {
-            var httpClient = new HttpClient();
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "https://localhost:5100/order/add");
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "/apitest/get");
             httpRequestMessage.Headers.Add("sampleapi-api-key", "1234567890!");
-
-            var requestContent = JsonSerializer.Serialize(order);
-            httpRequestMessage.Content = new StringContent(requestContent);
-
-            var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
+            var httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage);
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
@@ -44,12 +32,12 @@ internal class OrderService : IOrderService
 
                 //TODO mapping (man braucht extra Klassen (DTOs) für die externe Aufrufe,
                 //die man danach auf eigene (interne) Klassen mappt
-                var result = JsonSerializer.Deserialize<Order>(content, new JsonSerializerOptions
+                var models = JsonSerializer.Deserialize<List<Order>>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
-                return result;
+                return models;
             }
             else
             {

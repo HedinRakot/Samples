@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Data.SqlClient;
 using NServiceBus;
@@ -11,6 +12,7 @@ using SampleApp.ErrorHandling;
 using SampleApp.Messages;
 using SampleApp.Models;
 using SampleApp.Models.Mapping;
+using SampleApp.Tracing;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -83,6 +85,10 @@ try
         .Enrich.WithProcessId()
         .Enrich.WithProcessName()
         .Enrich.WithMachineName();
+
+    //tracing
+    builder.Services.AddSingleton<ITracingManager, TracingManager>();
+    builder.Services.AddSingleton<TracingListener>();
 
     var logger = loggerConfiguration.CreateLogger();
     builder.Host.UseSerilog(logger);
@@ -161,6 +167,9 @@ try
     app.UseMiddleware<ErrorHandlingMiddleware>();
 
     app.UseSerilogRequestLogging();
+
+    var tracingListener = app.Services.GetRequiredService<TracingListener>();
+    DiagnosticListener.AllListeners.Subscribe(tracingListener);
 
     await app.RunAsync();
 

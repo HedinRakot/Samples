@@ -21,7 +21,7 @@ internal class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenticatio
     {
         var apiKey = Request.Headers.FirstOrDefault(o => o.Key == "x-api-key");
 
-        if (apiKey.Value == "1234567890")
+        //TODO if (apiKey.Value == "1234567890")
         {
             var claims = new[] {
                 new Claim(ClaimTypes.Name, "SystemAccount"),
