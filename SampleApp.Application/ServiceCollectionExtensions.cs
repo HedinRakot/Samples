@@ -6,9 +6,11 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        return services.AddScoped<IOrderService, OrderService>()
-        .AddSingleton<IMessageService, MessageService>()
-        .AddSingleton<ICache, Cache>()
-        .AddHostedService<SampleBackgroundService>();
+        return services
+            .AddSingleton<IMessageService, MessageService>()
+            .AddSingleton<ICache, Cache>()
+            .AddSingleton<ITracingManager, TracingManager>()
+            .AddScoped<IOrderService, OrderService>()
+            .AddHostedService<SampleBackgroundService>();
     }
 }

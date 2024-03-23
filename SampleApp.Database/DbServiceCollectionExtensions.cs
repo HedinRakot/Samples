@@ -17,7 +17,7 @@ public static class DbServiceCollectionExtensions
             options.UseSqlServer(configuration.GetConnectionString("SampleAppDb"));
         });
 
-        return result.AddScoped<ICustomerRepository, CustomerRepository>()
+        return services.AddScoped<ICustomerRepository, CustomerRepository>()
             .AddScoped<IOrderRepository, OrderRepository>()
             .AddScoped<IOrderHistoryRepository, OrderHistoryRepository>()
             .AddScoped<ICouponRepository, CouponRepository>()
